@@ -1,0 +1,36 @@
+package config;
+
+import org.apache.tomcat.jdbc.pool.DataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+@Configuration
+@Profile("dev")
+public class DsDevConfig {
+	
+	@Value("${db.driver}")
+	private String driver;
+	@Value("${db.url}")
+	private String url;
+	@Value("${db.user}")
+	private String user;
+	@Value("${db.password}")
+	private String password;
+
+	@Bean(destroyMethod = "close")
+	public DataSource dataSource() {
+		System.out.println("DsDevConfig 설정 클래스의 dataSource() 메서드 실행");
+		DataSource ds = new DataSource();
+		ds.setDriverClassName(driver);
+		ds.setUrl(url);
+		ds.setUsername(user);
+		ds.setPassword(password);
+		ds.setInitialSize(2);
+		ds.setTestWhileIdle(true);
+		ds.setMinEvictableIdleTimeMillis(60000 * 3);
+		ds.setTimeBetweenEvictionRunsMillis(10 * 1000);
+		return ds;
+	}
+}
